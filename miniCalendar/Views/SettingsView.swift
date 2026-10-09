@@ -58,9 +58,12 @@ struct SettingsView: View {
 
             Divider()
 
-            Button("Завершить", role: .destructive, action: model.quit)
-                .buttonStyle(.borderless)
-                .frame(maxWidth: .infinity, alignment: .center)
+            Button(role: .destructive, action: model.quit) {
+                Text("Завершить")
+                    .frame(maxWidth: .infinity)
+            }
+            .buttonStyle(.bordered)
+            .controlSize(.large)
 
             about
         }
@@ -97,7 +100,7 @@ struct SettingsView: View {
     private var about: some View {
         VStack(spacing: 2) {
             Text(appName)
-            Text("Версия \(appVersion)")
+            Text("Версия \(appVersion) · Сборка \(appBuild)")
         }
         .font(.caption)
         .foregroundStyle(.tertiary)
@@ -113,6 +116,10 @@ struct SettingsView: View {
 
     private var appVersion: String {
         Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
+    }
+
+    private var appBuild: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleVersion") as? String ?? "1"
     }
 
     private func settingGroup<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {

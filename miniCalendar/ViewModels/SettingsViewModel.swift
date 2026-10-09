@@ -41,6 +41,13 @@ final class SettingsViewModel {
         }
     }
 
+    var showWeekNumbers: Bool {
+        didSet {
+            guard showWeekNumbers != oldValue else { return }
+            store.showWeekNumbers = showWeekNumbers
+        }
+    }
+
     init(store: SettingsStore) {
         self.store = store
         preset = store.preset
@@ -48,6 +55,7 @@ final class SettingsViewModel {
         showSeconds = store.showSeconds
         hourCycle = store.hourCycle
         localePreference = store.localePreference
+        showWeekNumbers = store.showWeekNumbers
     }
 
     var usesCustomFormat: Bool {

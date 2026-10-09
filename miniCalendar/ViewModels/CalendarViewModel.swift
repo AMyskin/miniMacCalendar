@@ -44,6 +44,18 @@ final class CalendarViewModel {
         makeDays()
     }
 
+    var showWeekNumbers: Bool {
+        settings.showWeekNumbers
+    }
+
+    var weekNumbers: [Int] {
+        let activeCalendar = calendar
+        let monthDays = makeDays()
+        return stride(from: 0, to: monthDays.count, by: 7).map { index in
+            activeCalendar.component(.weekOfYear, from: monthDays[index].date)
+        }
+    }
+
     var displayedYear: Int {
         calendar.component(.year, from: displayedMonth)
     }
@@ -126,6 +138,10 @@ final class CalendarViewModel {
         if calendar.isDate(date, inSameDayAs: today) {
             label += ", сегодня"
         }
+        if showWeekNumbers {
+            let week = calendar.component(.weekOfYear, from: date)
+            label += ", неделя \(week)"
+        }
         return label
     }
 
@@ -169,6 +185,7 @@ final class CalendarViewModel {
             var calendar = Calendar(identifier: .gregorian)
             calendar.locale = Locale(identifier: "ru_RU")
             calendar.firstWeekday = 2
+            calendar.minimumDaysInFirstWeek = 4
             return calendar
         case .english:
             var calendar = Calendar(identifier: .gregorian)

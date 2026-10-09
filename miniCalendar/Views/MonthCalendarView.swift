@@ -6,6 +6,7 @@ struct MonthCalendarView: View {
     var onOpenSettings: () -> Void
 
     private let columns = Array(repeating: GridItem(.flexible(), spacing: 0), count: 7)
+    private let weekNumberColumnWidth: CGFloat = 24
 
     var body: some View {
         VStack(spacing: 8) {
@@ -65,6 +66,9 @@ struct MonthCalendarView: View {
 
     private var weekdayRow: some View {
         HStack(spacing: 0) {
+            if model.showWeekNumbers {
+                weekNumberGutter
+            }
             ForEach(Array(model.weekdaySymbols.enumerated()), id: \.offset) { _, symbol in
                 Text(symbol)
                     .font(.caption)
@@ -75,19 +79,40 @@ struct MonthCalendarView: View {
     }
 
     private var grid: some View {
-        LazyVGrid(columns: columns, spacing: 2) {
-            ForEach(model.days) { day in
-                DayCell(
-                    day: day,
-                    isSelected: model.isSelected(day.date),
-                    accessibilityLabel: model.accessibilityLabel(for: day.date)
-                ) {
-                    model.select(day.date)
+        HStack(alignment: .top, spacing: 0) {
+            if model.showWeekNumbers {
+                VStack(spacing: 2) {
+                    ForEach(Array(model.weekNumbers.enumerated()), id: \.offset) { _, week in
+                        Text("\(week)")
+                            .font(.caption2)
+                            .foregroundStyle(.tertiary)
+                            .monospacedDigit()
+                            .frame(width: weekNumberColumnWidth, height: 30)
+                    }
+                }
+                .padding(.trailing, 2)
+            }
+
+            LazyVGrid(columns: columns, spacing: 2) {
+                ForEach(model.days) { day in
+                    DayCell(
+                        day: day,
+                        isSelected: model.isSelected(day.date),
+                        accessibilityLabel: model.accessibilityLabel(for: day.date)
+                    ) {
+                        model.select(day.date)
+                    }
                 }
             }
         }
         .id(model.displayedMonth)
         .transition(.push(from: model.movesForward ? .trailing : .leading))
+    }
+
+    private var weekNumberGutter: some View {
+        Color.clear
+            .frame(width: weekNumberColumnWidth)
+            .padding(.trailing, 2)
     }
 
     private var footer: some View {

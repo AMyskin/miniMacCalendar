@@ -45,6 +45,10 @@ struct SettingsView: View {
                 }
             }
 
+            settingGroup("Календарь") {
+                Toggle("Номер недели", isOn: $model.showWeekNumbers)
+            }
+
             settingGroup("Язык") {
                 Picker("Язык", selection: $model.localePreference) {
                     ForEach(FormatLocalePreference.allCases) { preference in

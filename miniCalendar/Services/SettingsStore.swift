@@ -9,6 +9,7 @@ final class SettingsStore {
         static let showSeconds = "clockShowSeconds"
         static let hourCycle = "clockHourCycle"
         static let locale = "clockLocalePreference"
+        static let showWeekNumbers = "calendarShowWeekNumbers"
     }
 
     private let defaults: UserDefaults
@@ -32,6 +33,10 @@ final class SettingsStore {
     }
 
     var localePreference: FormatLocalePreference {
+        didSet { persistAndNotify() }
+    }
+
+    var showWeekNumbers: Bool {
         didSet { persistAndNotify() }
     }
 
@@ -68,6 +73,12 @@ final class SettingsStore {
 
         let storedLocale = defaults.string(forKey: Key.locale) ?? ""
         localePreference = FormatLocalePreference(rawValue: storedLocale) ?? fallback.localePreference
+
+        if defaults.object(forKey: Key.showWeekNumbers) == nil {
+            showWeekNumbers = false
+        } else {
+            showWeekNumbers = defaults.bool(forKey: Key.showWeekNumbers)
+        }
         isLoaded = true
     }
 
@@ -78,6 +89,7 @@ final class SettingsStore {
         defaults.set(showSeconds, forKey: Key.showSeconds)
         defaults.set(hourCycle.rawValue, forKey: Key.hourCycle)
         defaults.set(localePreference.rawValue, forKey: Key.locale)
+        defaults.set(showWeekNumbers, forKey: Key.showWeekNumbers)
         onChange?()
     }
 }

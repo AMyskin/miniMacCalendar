@@ -61,6 +61,8 @@ struct SettingsView: View {
             Button("Завершить", role: .destructive, action: model.quit)
                 .buttonStyle(.borderless)
                 .frame(maxWidth: .infinity, alignment: .center)
+
+            about
         }
         .padding(16)
         .frame(width: 308)
@@ -90,6 +92,27 @@ struct SettingsView: View {
                     .fill(.quaternary.opacity(0.7))
             }
             .accessibilityLabel("Пример: \(model.previewText(at: now))")
+    }
+
+    private var about: some View {
+        VStack(spacing: 2) {
+            Text(appName)
+            Text("Версия \(appVersion)")
+        }
+        .font(.caption)
+        .foregroundStyle(.tertiary)
+        .frame(maxWidth: .infinity)
+        .accessibilityElement(children: .combine)
+    }
+
+    private var appName: String {
+        let displayName = Bundle.main.object(forInfoDictionaryKey: "CFBundleDisplayName") as? String
+        let bundleName = Bundle.main.object(forInfoDictionaryKey: "CFBundleName") as? String
+        return displayName ?? bundleName ?? "miniCalendar"
+    }
+
+    private var appVersion: String {
+        Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "1.0"
     }
 
     private func settingGroup<Content: View>(_ title: String, @ViewBuilder content: () -> Content) -> some View {
